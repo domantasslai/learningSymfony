@@ -34,10 +34,10 @@ RUN set -eux; \
 
 ###> recipes ###
 ###> doctrine/doctrine-bundle ###
-RUN apk add --no-cache --virtual .pgsql-deps postgresql-dev; \
-	docker-php-ext-install -j"$(nproc)" pdo_pgsql; \
-	apk add --no-cache --virtual .pgsql-rundeps so:libpq.so.5; \
-	apk del .pgsql-deps
+#RUN apk add --no-cache --virtual .pgsql-deps postgresql-dev; \
+#	docker-php-ext-install -j"$(nproc)" pdo_pgsql; \
+#	apk add --no-cache --virtual .pgsql-rundeps so:libpq.so.5; \
+#	apk del .pgsql-deps
 ###< doctrine/doctrine-bundle ###
 ###< recipes ###
 
@@ -100,6 +100,6 @@ RUN set -eux; \
 	composer run-script --no-dev post-install-cmd; \
 	chmod +x bin/console; sync;
 
-RUN docker-php-ext-install pdo pdo_mysql
+RUN #docker-php-ext-install pdo pdo_mysql
 
 RUN echo "apc.enable_cli=1"
