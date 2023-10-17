@@ -55,10 +55,14 @@ services:
       #####################################
   database:
     image: 'mysql:8.0'
+    container_name: symfonyCast5
+    volumes:
+      - ./mysql:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: cauldron_overflow
     ports:
-      - '3306'
+      - '3306:3306'
       #####################################
       # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
       # - ./docker/db/data:/var/lib/postgresql/data:rw
@@ -67,9 +71,3 @@ services:
 volumes:
   caddy_data:
   caddy_config:
-###> symfony/mercure-bundle ###
-###< symfony/mercure-bundle ###
-
-###> doctrine/doctrine-bundle ###
-  database_data:
-###< doctrine/doctrine-bundle ###
