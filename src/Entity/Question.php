@@ -26,6 +26,9 @@ class Question
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $askedAt = null;
 
+    #[ORM\Column]
+    private ?int $votes = 0;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -75,6 +78,39 @@ class Question
     public function setAskedAt(?\DateTimeImmutable $askedAt): static
     {
         $this->askedAt = $askedAt;
+
+        return $this;
+    }
+
+    public function getVotes(): int
+    {
+        return $this->votes;
+    }
+
+    public function getVotesString(): string
+    {
+        $prefix = $this->votes >= 0 ? '+' : '-';
+
+        return sprintf('%s %d', $prefix, abs($this->votes));
+    }
+
+    public function setVotes(int $votes): static
+    {
+        $this->votes = $votes;
+
+        return $this;
+    }
+
+    public function upVote(): self
+    {
+        $this->votes++;
+
+        return $this;
+    }
+
+    public function downVote(): self
+    {
+        $this->votes--;
 
         return $this;
     }

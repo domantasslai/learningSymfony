@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Question;
+use App\Repository\QuestionRepository;
 use App\Service\MarkdownHelper;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
@@ -26,7 +27,7 @@ class QuestionController extends AbstractController
     /**
      * @Route("/", name="questions.index")
      */
-    public function homepage(Request $request, Environment $twigEnvironment)
+    public function homepage(Request $request, Environment $twigEnvironment, QuestionRepository $questionRepository)
     {
         /*
         $html = $twigEnvironment->render('question/homepage.html.twig');
@@ -34,8 +35,12 @@ class QuestionController extends AbstractController
         return new Response(($html));
         */
 
+        $questions = $questionRepository->findAllAskedByNewest();
+
         // Same as:
-        return $this->render('question/homepage.html.twig');
+        return $this->render('question/homepage.html.twig', [
+            'questions' => $questions
+        ]);
     }
 
     /**
@@ -57,6 +62,8 @@ Does anyone have a spell to call your pants back?
 EOF
             );
 
+        $question->setVotes(rand(-20, 50));
+
         if (rand(1, 10) > 2) {
             $question->setAskedAt(new \DateTimeImmutable(sprintf('-%d days', rand(1, 100))));
         }
@@ -74,18 +81,10 @@ EOF
     /**
      * @Route("/questions/{slug}", name="questions.show")
      */
-    public function show($slug, MarkdownHelper $markdownHelper): Response
+    public function show(Question $question): Response
     {
         if ($this->isDebug) {
             $this->logger->info('We are in debug mode');
-        }
-
-        $repository = $this->entityManager->getRepository(Question::class);
-        /** @var Question|null $question */
-        $question = $repository->findOneBy(['slug' => $slug]);
-
-        if (!$question) {
-            throw $this->createNotFoundException(sprintf('no question found for slug "%s"', $slug));
         }
 
         $answers = [
@@ -93,10 +92,26 @@ EOF
             'Honestly, I like furry shoes better than MY cat',
             'Maybe... try saying the spell backwards?',
         ];
-//dd(Carbon::parse($question->getAskedAt())->diffForHumans());
+
         return $this->render('question/show.html.twig', [
             'question' => $question,
             'answers' => $answers,
         ]);
+    }
+
+    /**
+     * @Route("/questions/{slug}/vote", name="questions.vote", methods="POST")
+     */
+    public function questionVote(Question $question, Request $request)
+    {
+        if ($request->get('direction') === 'up') {
+            $question->upVote();
+        } elseif ($request->get('direction') === 'down') {
+            $question->downVote();
+        }
+
+        $this->entityManager->flush();
+
+        return $this->redirectToRoute('questions.show', ['slug' => $question->getSlug()]);
     }
 }

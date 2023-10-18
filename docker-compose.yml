@@ -4,6 +4,7 @@ services:
   php:
     image: ${IMAGES_PREFIX:-}app-php
     restart: unless-stopped
+    container_name: symfonyCast5-php
     environment:
       SERVER_NAME: ${SERVER_NAME:-localhost}, php:80
       MERCURE_PUBLISHER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
@@ -55,7 +56,7 @@ services:
       #####################################
   database:
     image: 'mysql:8.0'
-    container_name: symfonyCast5
+    container_name: symfonyCast5-mysql
     volumes:
       - ./mysql:/var/lib/mysql
     environment:
