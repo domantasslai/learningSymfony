@@ -24,7 +24,7 @@ class Question
     private ?string $question = null;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $askedAt = null;
+    private ?\DateTime $askedAt = null;
 
     #[ORM\Column]
     private ?int $votes = 0;
@@ -70,12 +70,12 @@ class Question
         return $this;
     }
 
-    public function getAskedAt(): ?\DateTimeImmutable
+    public function getAskedAt(): ?\DateTime
     {
         return $this->askedAt;
     }
 
-    public function setAskedAt(?\DateTimeImmutable $askedAt): static
+    public function setAskedAt(?\DateTime $askedAt): static
     {
         $this->askedAt = $askedAt;
 

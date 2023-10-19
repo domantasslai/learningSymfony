@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Question;
 use App\Repository\QuestionRepository;
 use App\Service\MarkdownHelper;
+use App\Service\VotingService;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -48,34 +49,7 @@ class QuestionController extends AbstractController
      */
     public function new(): Response
     {
-        $question = new Question();
-        $question->setName('Missing pants')
-            ->setSlug('missing-pants-' . rand(0, 100))
-            ->setQuestion(<<<EOF
-Hi! So... I'm having a *weird* day. Yesterday, I cast a spell
-to make my dishes wash themselves. But while I was casting it,
-I slipped a little and I think `I also hit my pants with the spell`.
-When I woke up this morning, I caught a quick glimpse of my pants
-opening the front door and walking out! I've been out all afternoon
-(with no pants mind you) searching for them.
-Does anyone have a spell to call your pants back?
-EOF
-            );
-
-        $question->setVotes(rand(-20, 50));
-
-        if (rand(1, 10) > 2) {
-            $question->setAskedAt(new \DateTimeImmutable(sprintf('-%d days', rand(1, 100))));
-        }
-
-        $this->entityManager->persist($question);
-        $this->entityManager->flush();
-
-        return new Response(sprintf(
-            'Well hello! The shiny new question is id #%d, slug %s',
-            $question->getId(),
-            $question->getSlug()
-        ));
+        return new Response();
     }
 
     /**
@@ -102,15 +76,9 @@ EOF
     /**
      * @Route("/questions/{slug}/vote", name="questions.vote", methods="POST")
      */
-    public function questionVote(Question $question, Request $request)
+    public function questionVote(Question $question, Request $request, VotingService $votingService)
     {
-        if ($request->get('direction') === 'up') {
-            $question->upVote();
-        } elseif ($request->get('direction') === 'down') {
-            $question->downVote();
-        }
-
-        $this->entityManager->flush();
+        $votingService->vote($question, $request->get('direction'));
 
         return $this->redirectToRoute('questions.show', ['slug' => $question->getSlug()]);
     }
