@@ -67,13 +67,13 @@
                         </div>
                         <div class="mr-3 pt-2">
                             {#                            {{ answer|striptags|markdown }} #}
-                            {{ answer|parse_markdown }}
-                            <p>-- Mallory</p>
+                            {{ answer.content|parse_markdown }}
+                            <p>-- {{ answer.username }}</p>
                         </div>
                         <div class="vote-arrows flex-fill pt-2 js-vote-arrows" style="min-width: 90px;">
-                            <a class="vote-up" href="{{ path('comments.vote', { id: 1, direction: 'up' }) }}"
+                            <a class="vote-up" href="{{ path('comments.vote', { id: answer.id, direction: 'up' }) }}"
                                data-direction="up"><i class="far fa-arrow-alt-circle-up"></i></a>
-                            <a class="vote-down" href="{{ path('comments.vote', { id: 1, direction: 'down' }) }}"
+                            <a class="vote-down" href="{{ path('comments.vote', { id: answer.id, direction: 'down' }) }}"
                                data-direction="down"><i class="far fa-arrow-alt-circle-down"></i></a>
                             <span>+ <span class="js-vote-total">6</span></span>
                         </div>

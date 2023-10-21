@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Question;
+use App\Repository\AnswerRepository;
 use App\Repository\QuestionRepository;
 use App\Service\MarkdownHelper;
 use App\Service\VotingService;
@@ -55,17 +56,18 @@ class QuestionController extends AbstractController
     /**
      * @Route("/questions/{slug}", name="questions.show")
      */
-    public function show(Question $question): Response
+    public function show(Question $question, AnswerRepository $answerRepository): Response
     {
         if ($this->isDebug) {
             $this->logger->info('We are in debug mode');
         }
 
-        $answers = [
-            'Make sure your cat is sitting `purrrfectly` still',
-            'Honestly, I like furry shoes better than MY cat',
-            'Maybe... try saying the spell backwards?',
-        ];
+//        $answers = $answerRepository->findBy([
+//            'question' => $question
+//        ]);
+        // OR
+        $answers = $question->getAnswers();
+//        dd($answers);
 
         return $this->render('question/show.html.twig', [
             'question' => $question,
