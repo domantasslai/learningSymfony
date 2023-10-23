@@ -29,6 +29,10 @@
                                            href="{{ path('comments.vote', { id: question.id, direction: 'down' }) }}"><i
                                                 class="far fa-arrow-alt-circle-down"></i></a>
                                     </div>
+
+                                    {% for tag in question.tags %}
+                                        <span class="badge rounded-pill bg-light text-dark">{{ tag.name }}</span>
+                                    {% endfor %}
                                 </div>
                                 <div class="col">
                                     <a class="q-title"
