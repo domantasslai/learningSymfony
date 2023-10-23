@@ -3,6 +3,7 @@
 namespace App\Factory;
 
 use App\Entity\Answer;
+use App\Enum\AnswerStatus;
 use App\Repository\AnswerRepository;
 use Zenstruck\Foundry\ModelFactory;
 use Zenstruck\Foundry\Proxy;
@@ -31,12 +32,15 @@ final class AnswerFactory extends ModelFactory
 {
     /**
      * @see https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#factories-as-services
-     *
-     * @todo inject services if required
      */
     public function __construct()
     {
         parent::__construct();
+    }
+
+    public function needsApproval(): self
+    {
+        return $this->addState(['status' => AnswerStatus::NEEDS_APPROVAL->value]);
     }
 
     /**
@@ -50,6 +54,7 @@ final class AnswerFactory extends ModelFactory
             'username' => self::faker()->userName(),
             'votes' => self::faker()->numberBetween(20, 50),
             'createdAt' => self::faker()->dateTimeBetween('-1 year'),
+            'status' => AnswerStatus::APPROVED->value
         ];
     }
 
@@ -58,9 +63,8 @@ final class AnswerFactory extends ModelFactory
      */
     protected function initialize(): self
     {
-        return $this
-            // ->afterInstantiate(function(Answer $answer): void {})
-        ;
+        return $this// ->afterInstantiate(function(Answer $answer): void {})
+            ;
     }
 
     protected static function getClass(): string

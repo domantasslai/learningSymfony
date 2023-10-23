@@ -3,7 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\Answer;
+use App\Enum\AnswerStatus;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -21,28 +23,50 @@ class AnswerRepository extends ServiceEntityRepository
         parent::__construct($registry, Answer::class);
     }
 
-//    /**
-//     * @return Answer[] Returns an array of Answer objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('a')
-//            ->andWhere('a.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('a.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public static function createApprovedCriteria(): Criteria
+    {
+        return Criteria::create()
+            ->andWhere(
+                Criteria::expr()
+                    ->eq(
+                        'status',
+                        AnswerStatus::APPROVED
+                    )
+            );
+    }
 
-//    public function findOneBySomeField($value): ?Answer
-//    {
-//        return $this->createQueryBuilder('a')
-//            ->andWhere('a.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    /**
+     * @param int $max
+     * @return Answer[]
+     */
+    public function findAllApproved(int $max = 10): array
+    {
+        return $this->createQueryBuilder('answer')
+            ->addCriteria(self::createApprovedCriteria())
+            ->setMaxResults($max)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @return Answer[]
+     */
+    public function findMostPopular(?string $search = null): array
+    {
+        $query = $this->createQueryBuilder('answer')
+            ->addCriteria(self::createApprovedCriteria())
+            ->orderBy('answer.votes', 'DESC')
+            ->innerJoin('answer.question', 'question')
+            ->addSelect('question')
+            ->setMaxResults(10);
+
+        if (!empty($search)) {
+            $query->andWhere('answer.content LIKE :search OR question.question LIKE :search')
+                ->setParameter('search', '%' . $search . '%');
+        }
+
+        return $query
+            ->getQuery()
+            ->getResult();
+    }
 }

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Question;
+use App\Enum\AnswerStatus;
 use App\Repository\AnswerRepository;
 use App\Repository\QuestionRepository;
 use App\Service\MarkdownHelper;
@@ -36,7 +37,6 @@ class QuestionController extends AbstractController
 
         return new Response(($html));
         */
-
         $questions = $questionRepository->findAllAskedByNewest();
 
         // Same as:
@@ -66,12 +66,10 @@ class QuestionController extends AbstractController
 //            'question' => $question
 //        ]);
         // OR
-        $answers = $question->getAnswers();
-//        dd($answers);
-
+//        $answers = $question->getAnswers();
+//        dd($question->getApprovedAnswers());
         return $this->render('question/show.html.twig', [
             'question' => $question,
-            'answers' => $answers,
         ]);
     }
 

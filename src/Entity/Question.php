@@ -2,9 +2,12 @@
 
 namespace App\Entity;
 
+use App\Enum\AnswerStatus;
+use App\Repository\AnswerRepository;
 use App\Repository\QuestionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation\Slug;
@@ -36,7 +39,8 @@ class Question
     #[ORM\Column]
     private ?int $votes = 0;
 
-    #[ORM\OneToMany(mappedBy: 'question', targetEntity: Answer::class)]
+    #[ORM\OneToMany(mappedBy: 'question', targetEntity: Answer::class, fetch: 'EXTRA_LAZY')]
+    #[ORM\OrderBy(['createdAt' => 'desc'])]
     private Collection $answers;
 
     public function __construct()
@@ -136,6 +140,13 @@ class Question
     public function getAnswers(): Collection
     {
         return $this->answers;
+    }
+
+    public function getApprovedAnswers(): Collection
+    {
+//        return $this->answers->filter(fn(Answer $answer) => $answer->getStatus()?->isApproved());
+
+        return $this->answers->matching(AnswerRepository::createApprovedCriteria());
     }
 
     public function addAnswer(Answer $answer): static

@@ -3,26 +3,30 @@
 namespace App\Service;
 
 use App\Controller\QuestionController;
+use App\Entity\Answer;
 use App\Entity\Question;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class VotingService
 {
-    public function __construct(private EntityManagerInterface $entityManager)
+    public function __construct(private EntityManagerInterface $entityManager, private LoggerInterface $logger)
     {
     }
 
-    public function vote(Question $question, string $direction): Question
+    public function vote(Question|Answer $entity, string $direction): Question|Answer
     {
         if ($direction === 'up') {
-            $question->upVote();
+            $this->logger->info('Voting up!');
+            $entity->upVote();
         } elseif ($direction === 'down') {
-            $question->downVote();
+            $this->logger->info('Voting down!');
+            $entity->downVote();
         }
 
         $this->entityManager->flush();
 
-        return $question;
+        return $entity;
     }
 }
