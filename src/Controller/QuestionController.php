@@ -10,6 +10,8 @@ use App\Service\MarkdownHelper;
 use App\Service\VotingService;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
+use Pagerfanta\Doctrine\ORM\QueryAdapter;
+use Pagerfanta\Pagerfanta;
 use Psr\Log\LoggerInterface;
 use Sentry\State\HubAdapter;
 use Sentry\State\HubInterface;
@@ -28,20 +30,27 @@ class QuestionController extends AbstractController
     }
 
     /**
-     * @Route("/", name="questions.index")
+     * @Route("/{page<\d+>}", name="questions.index")
      */
-    public function homepage(Request $request, Environment $twigEnvironment, QuestionRepository $questionRepository)
+    public function homepage(Environment $twigEnvironment, QuestionRepository $questionRepository, int $page = 1)
     {
         /*
         $html = $twigEnvironment->render('question/homepage.html.twig');
 
         return new Response(($html));
         */
-        $questions = $questionRepository->findAllAskedByNewest();
+        $queryBuilder = $questionRepository->createAskedOrderedByNewestQueryBuilder();
+
+        $pagerfanta = new Pagerfanta(
+            new QueryAdapter($queryBuilder)
+        );
+
+        $pagerfanta->setMaxPerPage(5);
+        $pagerfanta->setCurrentPage($page);
 
         // Same as:
         return $this->render('question/homepage.html.twig', [
-            'questions' => $questions
+            'pager' => $pagerfanta
         ]);
     }
 

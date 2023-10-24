@@ -53,6 +53,19 @@ class QuestionRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function createAskedOrderedByNewestQueryBuilder(): QueryBuilder
+    {
+        return $this
+            ->addIsAskedQueryBuilder()
+            ->orderBy('q.askedAt', 'DESC')
+            ->leftJoin('q.answers', 'answer')
+            ->leftJoin('q.questionTags', 'question_tag')
+            ->innerJoin('question_tag.tag', 'tag')
+            ->addSelect(['answer', 'question_tag', 'tag'])
+            ->andWhere('answer.status = :status')
+            ->setParameter('status', AnswerStatus::APPROVED->value);
+    }
+
     private function addIsAskedQueryBuilder(QueryBuilder $qb = null): QueryBuilder
     {
         return $this->getOrCreateQueryBuilder($qb)
