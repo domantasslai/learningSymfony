@@ -18,15 +18,28 @@ class AppFixtures extends Fixture
     {
         TagFactory::createMany(100);
 
-        QuestionTagFactory::createMany(10);
-
-        return;
-
+        // More advanced way:
         $questions = QuestionFactory::createMany(20, function () {
             return [
-                'tags' => TagFactory::randomRange(0, 5)
+                'questionTags' => QuestionTagFactory::new(function () {
+                    return [
+                        'tag' => TagFactory::random()
+                    ];
+                })->many(1, 5),
             ];
         });
+
+        // simpler way to do:
+        // TagFactory::createMany(100);
+        // QuestionFactory::createMany(100);
+        // And then:
+//        $questions = QuestionTagFactory::createMany(100, function () {
+//            return [
+//                'tag' => TagFactory::random(),
+//                'question' => QuestionFactory::random(),
+//            ];
+//        });
+
 
         QuestionFactory::new()
             ->unpublished()
@@ -44,7 +57,7 @@ class AppFixtures extends Fixture
             ];
         })->needsApproval()->many(20)->create();
 
-        // Manually saving ManyToMany relationship
+// Manually saving ManyToMany relationship
 //        $question = QuestionFactory::createOne()->object();
 //
 //        $tag1 = new Tag();

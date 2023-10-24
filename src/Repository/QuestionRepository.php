@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Question;
+use App\Enum\AnswerStatus;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -27,12 +28,27 @@ class QuestionRepository extends ServiceEntityRepository
      */
     public function findAllAskedByNewest(): array
     {
+        // Traditional way to query manyToMany relationship, when working without middle table entity
+//        return $this
+//            ->addIsAskedQueryBuilder()
+//            ->orderBy('q.askedAt', 'DESC')
+//            ->leftJoin('q.tags', 'tag')
+//            ->addSelect('tag')
+//            ->setMaxResults(10)
+//            ->getQuery()
+//            ->getResult();
+
+
         return $this
             ->addIsAskedQueryBuilder()
             ->orderBy('q.askedAt', 'DESC')
-            ->leftJoin('q.tags', 'tag')
-            ->addSelect('tag')
-            ->setMaxResults(10)
+            ->leftJoin('q.answers', 'answer')
+            ->leftJoin('q.questionTags', 'question_tag')
+            ->innerJoin('question_tag.tag', 'tag')
+            ->addSelect(['answer', 'question_tag', 'tag'])
+            ->andWhere('answer.status = :status')
+            ->setParameter('status', AnswerStatus::APPROVED->value)
+//            ->setMaxResults(10)
             ->getQuery()
             ->getResult();
     }

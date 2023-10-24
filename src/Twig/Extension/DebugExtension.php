@@ -19,4 +19,12 @@ class DebugExtension extends AbstractExtension
             new TwigFilter('dump', [DdExtensionRuntime::class, 'dump']),
         ];
     }
+
+    public function getFunctions(): array
+    {
+        return [
+            new TwigFunction('dd', [DdExtensionRuntime::class, 'dd']),
+            new TwigFunction('dump', [DdExtensionRuntime::class, 'dump']),
+        ];
+    }
 }
