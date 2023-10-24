@@ -9,6 +9,7 @@ use App\Factory\AnswerFactory;
 use App\Factory\QuestionFactory;
 use App\Factory\QuestionTagFactory;
 use App\Factory\TagFactory;
+use App\Factory\UserFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
@@ -72,6 +73,11 @@ class AppFixtures extends Fixture
 //
 //        $manager->persist($tag1);
 //        $manager->persist($tag2);
+
+        UserFactory::createOne([
+            'email' => 'user1@gmail.com'
+        ]);
+        UserFactory::createMany(10);
 
         $manager->flush();
     }

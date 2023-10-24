@@ -3,18 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Question;
-use App\Enum\AnswerStatus;
 use App\Repository\AnswerRepository;
 use App\Repository\QuestionRepository;
-use App\Service\MarkdownHelper;
 use App\Service\VotingService;
-use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
 use Psr\Log\LoggerInterface;
-use Sentry\State\HubAdapter;
-use Sentry\State\HubInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,7 +18,6 @@ use Twig\Environment;
 
 class QuestionController extends AbstractController
 {
-
     public function __construct(private LoggerInterface $logger, private bool $isDebug, private EntityManagerInterface $entityManager)
     {
 
