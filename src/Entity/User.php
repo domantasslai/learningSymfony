@@ -12,6 +12,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     use TimestampableEntity;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -55,7 +56,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        return (string)$this->email;
     }
 
     /**
@@ -126,5 +127,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->plainPassword = $plainPassword;
 
         return $this;
+    }
+
+    public function getAvatarUri(int $size = 32): string
+    {
+        return "https://ui-avatars.com/api/?" . http_build_query([
+                'name' => $this->getDisplayName(),
+                'size' => $size,
+                'background' => 'random'
+            ]);
+    }
+
+    public function getDisplayName(): string
+    {
+        return $this->firstName ?: $this->email;
     }
 }

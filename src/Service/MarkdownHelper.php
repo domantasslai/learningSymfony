@@ -4,6 +4,7 @@ namespace App\Service;
 
 use Knp\Bundle\MarkdownBundle\MarkdownParserInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Contracts\Cache\CacheInterface;
 
 class MarkdownHelper
@@ -14,7 +15,8 @@ class MarkdownHelper
         private CacheInterface          $cache,
         private MarkdownParserInterface $markdown,
         private bool                    $isDebug,
-        LoggerInterface                 $mdLogger
+        private Security                $security,
+        LoggerInterface                 $mdLogger,
     )
     {
         $this->logger = $mdLogger;
@@ -24,6 +26,12 @@ class MarkdownHelper
     {
         if (stripos($source, 'cat') !== false) {
             $this->logger->info('Moew!');
+        }
+
+        if ($this->security->isGranted('IS_AUTHENTICATED_REMEMBERED')) { // OR $this->security->getUser()
+            $this->logger->info('Rendering markdown for {user}', [
+                'user' => $this->security->getUser()->getEmail()
+            ]);
         }
 
         if ($this->isDebug) {
