@@ -14,8 +14,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Twig\Environment;
 
+// fourth way: (globally on all controller routes)
+//#[IsGranted('ROLE_ADMIN')]
 class QuestionController extends AbstractController
 {
     public function __construct(private LoggerInterface $logger, private bool $isDebug, private EntityManagerInterface $entityManager)
@@ -48,12 +51,20 @@ class QuestionController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/questions/new", name="questions.new")
-     */
+    #[Route('/questions/new', name:"questions.new")]
+    // Third way:
+    #[IsGranted("ROLE_USER")]
     public function new(): Response
     {
-        return new Response();
+        // Adding access to role
+        // first way:
+//        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        // second way:
+//        if (!$this->isGranted('ROLE_ADMIN')) {
+//            throw $this->createAccessDeniedException('No access for you!');
+//        }
+
+        return new Response('Sounds like a GREAT feature for V2!');
     }
 
     /**
