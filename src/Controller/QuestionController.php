@@ -18,7 +18,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Twig\Environment;
 
 // fourth way: (globally on all controller routes)
-//#[IsGranted('ROLE_ADMIN')]
+//#[IsGranted('ROLE_ADMIN')] // Can use role name or IS_AUTHENTICATED_FULLY
 class QuestionController extends AbstractController
 {
     public function __construct(private LoggerInterface $logger, private bool $isDebug, private EntityManagerInterface $entityManager)
@@ -53,14 +53,14 @@ class QuestionController extends AbstractController
 
     #[Route('/questions/new', name:"questions.new")]
     // Third way:
-    #[IsGranted("ROLE_USER")]
+    #[IsGranted("ROLE_USER")] // Can use role name or IS_AUTHENTICATED_FULLY
     public function new(): Response
     {
         // Adding access to role
         // first way:
-//        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+//        $this->denyAccessUnlessGranted('ROLE_ADMIN'); // Can use role name or IS_AUTHENTICATED_FULLY
         // second way:
-//        if (!$this->isGranted('ROLE_ADMIN')) {
+//        if (!$this->isGranted('ROLE_ADMIN')) { // Can use role name or IS_AUTHENTICATED_FULLY
 //            throw $this->createAccessDeniedException('No access for you!');
 //        }
 
