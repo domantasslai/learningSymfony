@@ -8,12 +8,12 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class UserController extends BaseController
 {
-    #[Route('/api/me', name: 'app_user_apime')]
+    #[Route('/api/me', name: 'app_user_api_me')]
     #[IsGranted('IS_AUTHENTICATED_REMEMBERED')]
     public function apiMe(): Response
     {
         return $this->json(data: $this->getUser(), context: [
             'groups' => ['user:read']
-        ] );
+        ]);
     }
 }
