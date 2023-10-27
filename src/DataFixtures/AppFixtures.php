@@ -17,6 +17,17 @@ class AppFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
+        UserFactory::createOne([
+            'email' => 'user1@gmail.com',
+            'roles' => ['ROLE_ADMIN'],
+        ]);
+
+        UserFactory::createOne([
+            'email' => 'user2@gmail.com',
+        ]);
+
+        UserFactory::createMany(10);
+
         TagFactory::createMany(100);
 
         // More advanced way:
@@ -27,6 +38,7 @@ class AppFixtures extends Fixture
                         'tag' => TagFactory::random()
                     ];
                 })->many(1, 5),
+                'owner' => UserFactory::random()
             ];
         });
 
@@ -42,7 +54,9 @@ class AppFixtures extends Fixture
 //        });
 
 
-        QuestionFactory::new()
+        QuestionFactory::new(function () {
+            return ['owner' => UserFactory::random()];
+        })
             ->unpublished()
             ->createMany(5);
 
@@ -73,17 +87,6 @@ class AppFixtures extends Fixture
 //
 //        $manager->persist($tag1);
 //        $manager->persist($tag2);
-
-        UserFactory::createOne([
-            'email' => 'user1@gmail.com',
-            'roles' => ['ROLE_ADMIN'],
-        ]);
-
-        UserFactory::createOne([
-            'email' => 'user2@gmail.com',
-        ]);
-
-        UserFactory::createMany(10);
 
         $manager->flush();
     }

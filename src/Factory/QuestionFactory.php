@@ -50,6 +50,7 @@ final class QuestionFactory extends ModelFactory
             ),
             'askedAt' => self::faker()->dateTimeBetween('-100 days', '-1 minute'),
             'votes' => self::faker()->numberBetween(-20, 50),
+            'owner' => UserFactory::new()
         ];
     }
 
