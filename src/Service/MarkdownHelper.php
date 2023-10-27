@@ -9,7 +9,7 @@ use Symfony\Contracts\Cache\CacheInterface;
 
 class MarkdownHelper
 {
-    private $logger;
+    private LoggerInterface $logger;
 
     public function __construct(
         private CacheInterface          $cache,
