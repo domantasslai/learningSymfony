@@ -39,6 +39,8 @@ security:
                 always_remember_me: true # uncomment this if needed to always remember on every request
                 
             switch_user: true
+            
+            login_throttling: true
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
