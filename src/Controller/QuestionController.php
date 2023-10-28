@@ -87,12 +87,14 @@ class QuestionController extends BaseController
     }
 
     #[Route('/questions/edit/{slug}', name: 'app_question_edit')]
-    #[IsGranted('IS_AUTHENTICATED_REMEMBERED')]
+//    #[IsGranted('IS_AUTHENTICATED_REMEMBERED')]
     public function edit(Question $question, QuestionRepository $questionRepository, AnswerRepository $answerRepository): Response
     {
-        if ($question->getOwner() !== $this->getUser()) {
-            throw $this->createAccessDeniedException('You are not the owner!');
-        }
+//        if ($question->getOwner() !== $this->getUser()) {
+//            throw $this->createAccessDeniedException('You are not the owner!');
+//        }
+
+        $this->denyAccessUnlessGranted('EDIT', $question);
 
         return $this->render('question/edit.html.twig', [
             'question' => $question,
