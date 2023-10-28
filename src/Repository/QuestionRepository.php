@@ -58,10 +58,11 @@ class QuestionRepository extends ServiceEntityRepository
         return $this
             ->addIsAskedQueryBuilder()
             ->orderBy('q.askedAt', 'DESC')
+            ->leftJoin('q.owner', 'owner')
             ->leftJoin('q.answers', 'answer')
             ->leftJoin('q.questionTags', 'question_tag')
             ->innerJoin('question_tag.tag', 'tag')
-            ->addSelect(['answer', 'question_tag', 'tag'])
+            ->addSelect(['answer', 'question_tag', 'tag', 'owner'])
             ->andWhere('answer.status = :status')
             ->setParameter('status', AnswerStatus::APPROVED->value);
     }
@@ -86,4 +87,16 @@ class QuestionRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+    public function findQuestionShowEntity($slug)
+    {
+        return $this
+            ->addIsAskedQueryBuilder()
+            ->andWhere('q.slug = :slug')
+            ->setParameter('slug', $slug)
+            ->leftJoin('q.owner', 'owner')
+            ->leftJoin('q.answers', 'answer')
+            ->addSelect(['answer', 'owner'])
+            ->getQuery()
+            ->getFirstResult();
+    }
 }

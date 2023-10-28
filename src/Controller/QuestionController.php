@@ -11,6 +11,7 @@ use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -67,9 +68,7 @@ class QuestionController extends BaseController
         return new Response('Sounds like a GREAT feature for V2!');
     }
 
-    /**
-     * @Route("/questions/{slug}", name="questions.show")
-     */
+    #[Route('/questions/{slug}', name: 'questions.show')]
     public function show(Question $question, AnswerRepository $answerRepository): Response
     {
         if ($this->isDebug) {
@@ -83,6 +82,19 @@ class QuestionController extends BaseController
 //        $answers = $question->getAnswers();
 //        dd($question->getApprovedAnswers());
         return $this->render('question/show.html.twig', [
+            'question' => $question,
+        ]);
+    }
+
+    #[Route('/questions/edit/{slug}', name: 'app_question_edit')]
+    #[IsGranted('IS_AUTHENTICATED_REMEMBERED')]
+    public function edit(Question $question, QuestionRepository $questionRepository, AnswerRepository $answerRepository): Response
+    {
+        if ($question->getOwner() !== $this->getUser()) {
+            throw $this->createAccessDeniedException('You are not the owner!');
+        }
+
+        return $this->render('question/edit.html.twig', [
             'question' => $question,
         ]);
     }
