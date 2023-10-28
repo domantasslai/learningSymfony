@@ -8,6 +8,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Zenstruck\Foundry\ModelFactory;
 use Zenstruck\Foundry\Proxy;
 use Zenstruck\Foundry\RepositoryProxy;
+use function Symfony\Component\Clock\now;
 
 /**
  * @extends ModelFactory<User>
@@ -50,6 +51,7 @@ final class UserFactory extends ModelFactory
             'firstName' => self::faker()->firstName(),
 //            'password' => $this->passwordHasher->hashPassword(),
             'plainPassword' => 'password',
+            'verified_at' => self::faker()->boolean() ? now()->format('Y-m-d H:i:s') : null
         ];
     }
 
