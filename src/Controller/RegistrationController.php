@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\RegistrationFormType;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,7 +14,9 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
 use Symfony\Component\Security\Http\Authenticator\FormLoginAuthenticator;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
+use function Symfony\Component\Clock\now;
 
 class RegistrationController extends AbstractController
 {
@@ -73,8 +76,34 @@ class RegistrationController extends AbstractController
     }
 
     #[Route('/verify', name: "app_verify_email")]
-    public function verifyUserEmail()
+    public function verifyUserEmail(Request $request, VerifyEmailHelperInterface $verifyEmailHelper, UserRepository $userRepository, EntityManagerInterface $entityManager)
     {
+        // http://127.0.0.1:8000/verify?expires=1698515497&id=51&signature=H%2FLx1zl8PFYoh3HE3mRjJ2ZIgaykZD%2FrwL0W%2FqoJoXE%3D&token=ILksjnrnt6zzVA7zSEcs5cnJuU085HzfBC4Q2ndzFJc%3D
 
+        $user = $userRepository->find($request->query->get('id'));
+
+        if (!$user) {
+            throw $this->createNotFoundException('User not found');
+        }
+
+        try {
+            $verifyEmailHelper->validateEmailConfirmation(
+                $request->getUri(),
+                $user->getId(),
+                $user->getEmail()
+            );
+
+        } catch (VerifyEmailExceptionInterface $e) {
+            $this->addFlash('error', $e->getReason());
+
+            return $this->redirectToRoute('app_register');
+        }
+
+        $user->setVerifiedAt(now());
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Account Verified! You can log in!');
+
+        return $this->redirectToRoute('app_login');
     }
 }
