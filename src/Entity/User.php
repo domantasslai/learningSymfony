@@ -204,7 +204,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
         return $this->verifiedAt;
     }
 
-    public function setVerifiedAt(\DateTimeImmutable $verifiedAt): static
+    public function setVerifiedAt(?\DateTimeImmutable $verifiedAt): static
     {
         $this->verifiedAt = $verifiedAt;
 
@@ -219,7 +219,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
 
     public function isTotpAuthenticationEnabled(): bool
     {
-        return $this->totpSecret ? true : false;
+        return (bool)$this->totpSecret;
     }
 
     public function getTotpAuthenticationUsername(): string

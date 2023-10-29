@@ -63,6 +63,10 @@
                         <li>
                             <a class="dropdown-item" href="{{ path('app_logout') }}">Log Out</a>
                         </li>
+                        <li>
+                            <a class="dropdown-item" href="{{ path('app_2fa_enable') }}">Enable 2fa</a>
+                        </li>
+
                         {% if is_granted('ROLE_PREVIOUS_ADMIN') %}
                             <li>
                                 <a class="dropdown-item" href="{{ path('questions.index', {
