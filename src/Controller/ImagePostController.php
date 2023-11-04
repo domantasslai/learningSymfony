@@ -37,31 +37,34 @@ class ImagePostController extends AbstractController
     public function create(Request $request, ValidatorInterface $validator, PhotoFileManager $photoManager, EntityManagerInterface $entityManager, MessageBusInterface $messageBus): Response
     {
         /** @var UploadedFile $imageFile */
-        $imageFile = $request->files->get('file');
+        $imageFiles = $request->files->get('file');
 
-        $errors = $validator->validate($imageFile, [
-            new Image(),
-            new NotBlank()
-        ]);
+        foreach ($imageFiles as $imageFile) {
+            $errors = $validator->validate($imageFile, [
+                new Image(),
+                new NotBlank()
+            ]);
 
-        if (count($errors) > 0) {
-            foreach ($errors as $error) {
-                $this->addFlash('error', $error->getMessage());
+            if (count($errors) > 0) {
+                foreach ($errors as $error) {
+                    $this->addFlash('error', $error->getMessage());
+                }
+
+                return $this->redirectToRoute('app_main_homepage');
             }
 
-            return $this->redirectToRoute('app_main_homepage');
+
+            $newFilename = $photoManager->uploadImage($imageFile);
+            $imagePost = new ImagePost();
+            $imagePost->setFilename($newFilename);
+            $imagePost->setOriginalFilename($imageFile->getClientOriginalName());
+
+            $entityManager->persist($imagePost);
+            $entityManager->flush();
+
+            $message = new AddPonkaToImage($imagePost);
+            $messageBus->dispatch($message);
         }
-
-        $newFilename = $photoManager->uploadImage($imageFile);
-        $imagePost = new ImagePost();
-        $imagePost->setFilename($newFilename);
-        $imagePost->setOriginalFilename($imageFile->getClientOriginalName());
-
-        $entityManager->persist($imagePost);
-        $entityManager->flush();
-
-        $message = new AddPonkaToImage($imagePost);
-        $messageBus->dispatch($message);
 
         $this->addFlash('success', 'New image was added');
 

@@ -18,12 +18,14 @@ class AddPonkaToImageHandler
 
     public function __invoke(AddPonkaToImage $addPonkaToImage)
     {
+        $imagePost = $addPonkaToImage->getImagePost();
         $updatedContents = $this->ponkaficator->ponkafy(
-            $this->photoManager->read($addPonkaToImage->getImagePost()->getFilename())
+            $this->photoManager->read($imagePost->getFilename())
         );
 
-        $this->photoManager->update($addPonkaToImage->getImagePost()->getFilename(), $updatedContents);
-        $addPonkaToImage->getImagePost()->markAsPonkaAdded();
+        $this->photoManager->update($imagePost->getFilename(), $updatedContents);
+        $imagePost->markAsPonkaAdded();
+        $this->entityManager->persist($imagePost);
         $this->entityManager->flush();
     }
 }
