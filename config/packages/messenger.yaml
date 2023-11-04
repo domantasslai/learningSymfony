@@ -12,6 +12,7 @@ framework:
         routing:
             # Route your messages to the transports
              'App\Message\AddPonkaToImage': async
+             'App\Message\DeletePhotoFile': async
 
 # when@test:
 #    framework:
