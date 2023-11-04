@@ -15,3 +15,18 @@ import { Collapse } from 'bootstrap';
 
 import $ from 'jquery';
 
+
+// import Vue from 'vue';
+// import ImageApp from './components/ImageApp';
+//
+// Vue.component('image-app', ImageApp);
+//
+// const app = new Vue({
+//   el: '#images-app'
+// });
+
+// import { createApp } from 'vue';
+// import ImageApp from './components/ImageApp';
+//
+// const app = createApp(ImageApp);
+// app.mount('#images-app');

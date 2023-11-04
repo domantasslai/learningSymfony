@@ -15,6 +15,7 @@ services:
         bind:
             bool $isDebug: '%kernel.debug%'
 #            $formLoginAuthenticator: '@security.authenticator.form_login.main'
+            $publicAssetBaseUrl: '/uploads/images'
     
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -29,3 +30,4 @@ services:
     # please note that last definitions always *replace* previous ones
     
     Psr\Log\LoggerInterface $mdLogger: '@monolog.logger.markdown'
+    Intervention\Image\ImageManager: ~
