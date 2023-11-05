@@ -16,6 +16,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 class AddPonkaToImageHandler implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
+
     public function __construct(
         private PhotoPonkaficator      $ponkaficator,
         private PhotoFileManager       $photoManager,
@@ -39,7 +40,11 @@ class AddPonkaToImageHandler implements LoggerAwareInterface
                 $this->logger->alert(sprintf('Image post %d was missing!', $imagePostId));
             }
 
-            return ;
+            return;
+        }
+
+        if (rand(0, 10) < 7) {
+            throw new \Exception('I failed randomly!');
         }
 
         $updatedContents = $this->ponkaficator->ponkafy(

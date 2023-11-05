@@ -11,7 +11,7 @@ class MainController extends AbstractController
     #[Route('/', name: 'app_main_homepage')]
     public function homepage(ImagePostRepository $imagePostRepository)
     {
-        $images = $imagePostRepository->findAll();
+        $images = $imagePostRepository->findBy([], ['createdAt' => 'DESC']);
 
         return $this->render('main/homepage.html.twig', [
             'images' => $images
