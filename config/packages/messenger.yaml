@@ -16,7 +16,11 @@ framework:
             # Route your messages to the transports
             'App\Message\AddPonkaToImage': async
             'App\Message\DeletePhotoFile': async
-
+        
+        buses:
+            messenger.bus.default:
+                middleware:
+                    - App\Messenger\AuditMiddleware
 # when@test:
 #    framework:
 #        messenger:
