@@ -2,6 +2,7 @@ monolog:
     channels:
         - deprecation # Deprecations are logged in the dedicated "deprecation" channel when it exists
         - markdown
+        - messenger_audit
 
 when@dev:
     monolog:
@@ -23,6 +24,11 @@ when@dev:
                 type: console
                 process_psr_3_messages: false
                 channels: ["!event", "!doctrine", "!console"]
+            messenger:
+                type: stream
+                path: "%kernel.logs_dir%/messenger.log"
+                level: debug
+                channels: [ "messenger_audit" ]
 
 when@test:
     monolog:

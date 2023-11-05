@@ -16,6 +16,7 @@ services:
             bool $isDebug: '%kernel.debug%'
 #            $formLoginAuthenticator: '@security.authenticator.form_login.main'
             $publicAssetBaseUrl: '/uploads/images'
+            Psr\Log\LoggerInterface $messengerAuditLogger: '@monolog.logger.messenger_audit'
     
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
